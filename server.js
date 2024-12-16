@@ -2,12 +2,15 @@ const bodyParser = require("body-parser")
 const express  =  require("express")
 const db  =  require("./db.js")
 const userRoutes =  require("./routes/userRoutes.js")
+const candidateRoutes =  require("./routes/candidateRoutes.js")
 require("dotenv").config()
 const app  = express()
 
 // middlewares
 app.use(bodyParser.json())
-app.use("/",userRoutes)
+
+app.use("/user",userRoutes)
+app.use("/candidate",candidateRoutes)
 
 app.get("/",(req,res)=>{
     res.send("Vote App is Running")

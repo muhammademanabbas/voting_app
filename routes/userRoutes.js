@@ -3,23 +3,19 @@ const router = express.Router();
 const { generateToken, jwtAuthMiddleware } = require("../jwt");
 const user = require("../models/userSchema");
 
+// user signup
 router.post("/signup", async (req, res) => {
   try {
     const userData = req.body;
     const newUser = new user(userData);
-    console.log("New User is: ", newUser);
 
     const response = await newUser.save();
-    console.log("response is: ", response);
 
     const payload = {
       id: newUser.id,
     };
 
-    console.log("payload is: ", payload);
-
     const token = generateToken(payload);
-    console.log("token is: ", token);
     res.status(200).json({ Response: response, Token: token });
   } catch (error) {
     console.error("Error :", error);
@@ -27,6 +23,7 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// user login
 router.post("/login", async (req, res) => {
   try {
     const { CNIC, password } = req.body;
@@ -47,6 +44,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// user profile
 router.get("/user/profile", jwtAuthMiddleware, async (req, res) => {
   try {
     if (!req.userDetail)
@@ -60,6 +58,8 @@ router.get("/user/profile", jwtAuthMiddleware, async (req, res) => {
     res.status(500).json({ Error: "Internal Server Error" });
   }
 });
+
+// user update password
 router.patch("/profile/password", jwtAuthMiddleware, async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -76,9 +76,9 @@ router.patch("/profile/password", jwtAuthMiddleware, async (req, res) => {
       return res.status(401).json({ error: "Invalid current password" });
     }
 
-    userData.password = newPassword; // Assign the new password to the user object
-
+    userData.password = newPassword; 
     const response = await userData.save();
+
     res
       .status(200)
       .json({ message: "Password Updated", Response: response });
@@ -88,6 +88,7 @@ router.patch("/profile/password", jwtAuthMiddleware, async (req, res) => {
   }
 });
 
+// get all users
 router.get("/users", async (req, res) => {
   try {
     const users = await user.find();
