@@ -77,4 +77,68 @@ router.delete("/:id",jwtAuthMiddleware, async (req, res) => {
   }
 });
 
+// user can vote to any candidate
+router.post("/:candidateID" , jwtAuthMiddleware , async (req,res)=>{
+
+  try {
+    const candidateData  =  await candidate.findById(req.params.candidateID);
+  if(!candidateData) 
+    return res.status(404).json({message:"There is no candidate with this ID"});
+
+  const userData  =  await user.findById(req.userDetail.id);
+  if(!userData) 
+    return res.status(404).json({message:"No User Found"});
+  if(userData.role ===  'admin')
+    return res.status(401).json({message:"Admin Can't Allowed"});
+  if(userData.isVoted)
+    return res.status(401).json({message:"You've already voted, you can't vote twice"});
+
+  candidateData.voteCount++;
+  candidateData.votes.push({user:req.userDetail.id});
+
+  userData.isVoted = !userData.isVoted;
+
+  await candidateData.save();
+  await userData.save();
+
+  res.status(200).json({vote:"You're all set! Vote counted"});
+  } catch (error) {
+    console.log("Error is : " , error);
+    res.status(200).json({Error:"Internal Server Error"});
+  }
+  
+})
+
+router.get("/vote/count" , jwtAuthMiddleware , async (req,res)=>{
+
+  try {
+    const allCandidates = await candidate.find();
+    const voteCount =  []
+    for(let i  = 0  ; i<allCandidates.length ;  i++  ){
+      voteCount.push({
+        name:allCandidates[i].name,
+        party:allCandidates[i].party,
+        voteCount:allCandidates[i].voteCount,
+      })
+    }
+
+    res.status(200).send({votes:voteCount})
+  } catch (error) {
+    console.log("Error is : " , error);
+    res.status(200).json({Error:"Internal Server Error"});
+  }
+  
+})
+
+// get all candidates
+router.get("/candidates", async (req, res) => {
+  try {
+    const Candidates = await candidate.find();
+    res.status(200).json({ Candidates: Candidates });
+  } catch (error) {
+    console.error("Error :", error);
+    res.status(500).json({ Error: "Internal Server Error" });
+  }
+});
+
 module.exports = router;

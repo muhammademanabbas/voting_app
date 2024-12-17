@@ -7,6 +7,13 @@ const user = require("../models/userSchema");
 router.post("/signup", async (req, res) => {
   try {
     const userData = req.body;
+
+    roleOfReq = userData.role
+
+    const adminUsers  = await user.find({role:"admin"});
+    if(adminUsers.length === 1 && userData.role === 'admin') 
+      return res.status(401).json({message:"Only One admin is allowed"})
+
     const newUser = new user(userData);
 
     const response = await newUser.save();
