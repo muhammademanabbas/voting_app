@@ -113,14 +113,16 @@ router.get("/vote/count" , jwtAuthMiddleware , async (req,res)=>{
 
   try {
     const allCandidates = await candidate.find();
-    const voteCount =  []
-    for(let i  = 0  ; i<allCandidates.length ;  i++  ){
-      voteCount.push({
-        name:allCandidates[i].name,
-        party:allCandidates[i].party,
-        voteCount:allCandidates[i].voteCount,
-      })
-    }
+    
+    
+    const voteCount = allCandidates.map((singleCandidate)=>{
+      return {
+        name:singleCandidate.name,
+        party:singleCandidate.party,
+        voteCount:singleCandidate.voteCount,
+        
+      }
+    })
 
     res.status(200).send({votes:voteCount})
   } catch (error) {
