@@ -1,0 +1,17 @@
+"Candidate Routes
+1-/candidate post method where admin can add the candidate , 
+2-/candidat/candidates get method  get the all candidate which is in database ,
+3-candidate/:id put method where can admin can update the candidate,
+4-candidate/:id delete method where admin can delete the candidate,
+5-candidate/vote/count get method wher user or admin can get the vote of all candidates,
+6-candidate/candidateID where user can vote to specific candidate,
+
+User Routes
+1-user/users where user can get all the users list,
+2-user/signup where user can signup,
+3-user/login where user can signin,
+4-/user/profile where user can get his/her profile,
+5-/profile/password wher user can change his/her password"
+
+
+
